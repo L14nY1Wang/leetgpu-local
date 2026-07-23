@@ -1,4 +1,8 @@
+import json
+import tempfile
 import unittest
+from pathlib import Path
+from unittest.mock import patch
 
 import torch
 
@@ -47,6 +51,31 @@ class JudgeConfigTests(unittest.TestCase):
             load_float32_matmul_precisions(),
             {"2_matrix_multiplication": "highest"},
         )
+
+    def test_config_changes_are_reloaded_without_restarting(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_path = Path(temp_dir) / "judge_overrides.json"
+            config_path.write_text(
+                json.dumps(
+                    {"tolerances": {"2_matrix_multiplication": {"atol": 0.1}}}
+                ),
+                encoding="utf-8",
+            )
+            with patch("judge_config.CONFIG_PATH", config_path):
+                self.assertEqual(
+                    effective_tolerances("2_matrix_multiplication", 1e-4, 1e-4),
+                    (0.1, 1e-4),
+                )
+                config_path.write_text(
+                    json.dumps(
+                        {"tolerances": {"2_matrix_multiplication": {"atol": 0.2}}}
+                    ),
+                    encoding="utf-8",
+                )
+                self.assertEqual(
+                    effective_tolerances("2_matrix_multiplication", 1e-4, 1e-4),
+                    (0.2, 1e-4),
+                )
 
 
 if __name__ == "__main__":

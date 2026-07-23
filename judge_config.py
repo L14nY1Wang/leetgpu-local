@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-from functools import lru_cache
 from pathlib import Path
 
 
@@ -11,14 +10,12 @@ CONFIG_PATH = Path(__file__).with_name("judge_overrides.json")
 MATMUL_PRECISIONS = {"highest", "high", "medium"}
 
 
-@lru_cache(maxsize=1)
 def _load_config() -> dict:
     if not CONFIG_PATH.exists():
         return {}
     return json.loads(CONFIG_PATH.read_text(encoding="utf-8"))
 
 
-@lru_cache(maxsize=1)
 def load_judge_overrides() -> dict[str, dict[str, float]]:
     tolerances = _load_config().get("tolerances", {})
     if not isinstance(tolerances, dict):
@@ -40,7 +37,6 @@ def load_judge_overrides() -> dict[str, dict[str, float]]:
     return result
 
 
-@lru_cache(maxsize=1)
 def load_float32_matmul_precisions() -> dict[str, str]:
     precisions = _load_config().get("float32MatmulPrecision", {})
     if not isinstance(precisions, dict):

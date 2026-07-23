@@ -74,7 +74,8 @@ python app.py
 
 本地判题参数覆盖写在 `judge_overrides.json` 中。可以按题目 ID 覆盖 `atol`、`rtol` 和
 `float32MatmulPrecision`；该配置会同时用于 API 展示、CUDA 判题和 Python GPU 语言
-判题，不会修改上游题库。
+判题，不会修改上游题库。配置支持热重载：保存文件后，下一次题目 API 请求和下一次
+评测会直接使用新值，无需重启服务；已经开始的单次评测不会中途切换配置。
 
 ## 判题机制
 

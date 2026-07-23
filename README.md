@@ -80,7 +80,9 @@ Set `LEETGPU_CHALLENGES=/path/to/checkout` to read a different checkout.
 Local judge overrides live in `judge_overrides.json`. It can override `atol`,
 `rtol`, and `float32MatmulPrecision` by challenge ID; the same values are used
 by the API, CUDA judge, and Python GPU judges without modifying the upstream
-checkout.
+checkout. The file is hot-reloaded: the next challenge API request and judge
+run use saved changes without restarting the service. An in-progress judge run
+keeps the settings it started with.
 
 ## Judge
 
