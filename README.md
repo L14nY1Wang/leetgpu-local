@@ -84,6 +84,9 @@ checkout. The file is hot-reloaded: the next challenge API request and judge
 run use saved changes without restarting the service. An in-progress judge run
 keeps the settings it started with.
 
+Open `/settings` to edit these overrides by challenge or as raw JSON. The page
+validates and atomically replaces the configuration file when saving.
+
 ## Judge
 
 CUDA submissions are compiled into a shared library with `nvcc`. The judge

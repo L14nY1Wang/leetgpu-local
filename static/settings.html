@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kernelyard / 判题配置</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css?v=20260723.5">
+</head>
+<body class="settings-page">
+  <div class="noise"></div>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">K</span><span>KERNELYARD</span></a>
+    <nav><a href="/">题目列表</a><a class="active" href="/settings">判题配置</a></nav>
+    <div class="status"><i id="configDot"></i><span id="configStatus">正在读取配置</span></div>
+  </header>
+
+  <main class="settings-main">
+    <header class="settings-heading">
+      <div><span class="eyebrow">JUDGE_OVERRIDES.JSON</span><h1>判题配置</h1></div>
+      <div class="settings-actions">
+        <button id="reloadButton" class="settings-button secondary" type="button">重新载入</button>
+        <button id="saveButton" class="settings-button primary" type="button">保存配置</button>
+      </div>
+    </header>
+
+    <div class="settings-toolbar">
+      <div class="view-tabs" role="tablist" aria-label="配置视图">
+        <button id="tableTab" class="active" type="button" role="tab" aria-selected="true">按题目</button>
+        <button id="jsonTab" type="button" role="tab" aria-selected="false">原始 JSON</button>
+      </div>
+      <input id="settingsSearch" type="search" placeholder="搜索题号、ID 或标题" aria-label="搜索题目">
+      <span id="overrideCount" class="override-count">0 项覆盖</span>
+    </div>
+
+    <section id="tableView" class="settings-view" role="tabpanel" aria-labelledby="tableTab">
+      <div class="settings-table-wrap">
+        <table class="settings-table">
+          <thead><tr><th>题目</th><th>ATOL</th><th>RTOL</th><th>FP32 MATMUL</th><th>状态</th></tr></thead>
+          <tbody id="settingsRows"><tr><td colspan="5" class="settings-empty">正在读取...</td></tr></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="jsonView" class="settings-view" role="tabpanel" aria-labelledby="jsonTab" hidden>
+      <textarea id="jsonEditor" class="json-editor" spellcheck="false" aria-label="原始 JSON 配置"></textarea>
+    </section>
+    <div id="settingsMessage" class="settings-message" role="status" aria-live="polite"></div>
+  </main>
+  <script src="/settings.js?v=20260723.5" defer></script>
+</body>
+</html>

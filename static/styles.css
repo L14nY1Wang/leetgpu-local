@@ -20,6 +20,7 @@ a { color: inherit; text-decoration: none; }
 .brand-mark { width: 30px; height: 30px; display: grid; place-items: center; color: var(--paper); background: var(--ink); transform: rotate(-4deg); }
 nav { display: flex; gap: 32px; font: 500 11px var(--mono); }
 nav a:hover { text-decoration: underline; text-underline-offset: 5px; }
+nav a.active { text-decoration: underline; text-decoration-color: var(--orange); text-decoration-thickness: 2px; text-underline-offset: 6px; }
 .status { display: flex; align-items: center; gap: 8px; font: 500 10px var(--mono); }
 .status i { width: 8px; height: 8px; border-radius: 50%; background: #aaa; box-shadow: 0 0 0 4px rgba(0,0,0,.06); }
 .status i.online { background: #62b538; }
@@ -148,6 +149,47 @@ body.resizing-rows { cursor: row-resize; user-select: none; }
 .code-pane .console { height: auto; min-height: 0; }
 .code-pane .console pre { max-height: 145px; }
 
+/* Judge settings */
+.settings-page { min-height: 100vh; }
+.settings-main { width: min(1440px, 92vw); margin: 0 auto; padding: 64px 0 90px; overflow: visible; }
+.settings-heading { display: flex; align-items: end; justify-content: space-between; gap: 30px; padding-bottom: 30px; border-bottom: 1px solid var(--ink); }
+.settings-heading h1 { margin: 10px 0 0; font-size: clamp(42px, 5vw, 72px); line-height: 1; letter-spacing: 0; }
+.settings-actions { display: flex; gap: 8px; }
+.settings-button { min-height: 43px; padding: 0 18px; border: 1px solid var(--ink); cursor: pointer; font: 500 10px var(--mono); letter-spacing: 0; }
+.settings-button.primary { color: var(--ink); background: var(--acid); }
+.settings-button.secondary { background: transparent; }
+.settings-button:disabled { opacity: .5; cursor: wait; }
+.settings-toolbar { min-height: 68px; display: grid; grid-template-columns: auto minmax(220px, 420px) 1fr; align-items: center; gap: 24px; border-bottom: 1px solid var(--line); }
+.view-tabs { display: flex; align-self: stretch; }
+.view-tabs button { min-width: 92px; padding: 0 14px; border: 0; border-bottom: 3px solid transparent; background: transparent; cursor: pointer; font: 500 10px var(--mono); }
+.view-tabs button.active { border-bottom-color: var(--orange); font-weight: 700; }
+.settings-toolbar input { width: 100%; padding: 10px 12px; border: 1px solid var(--line); outline: 0; background: rgba(255,255,255,.28); font: 11px var(--mono); }
+.settings-toolbar input:focus { border-color: var(--ink); }
+.override-count { justify-self: end; padding: 7px 10px; background: var(--ink); color: var(--acid); font: 9px var(--mono); }
+.settings-view[hidden] { display: none; }
+.settings-table-wrap { overflow-x: auto; }
+.settings-table { width: 100%; min-width: 800px; border-collapse: collapse; table-layout: fixed; }
+.settings-table th { height: 46px; color: var(--muted); border-bottom: 1px solid var(--ink); text-align: left; font: 500 9px var(--mono); letter-spacing: 0; }
+.settings-table th:first-child { width: 40%; }
+.settings-table th:nth-child(2), .settings-table th:nth-child(3) { width: 16%; }
+.settings-table th:nth-child(4) { width: 18%; }
+.settings-table th:last-child { width: 10%; }
+.settings-table td { height: 66px; padding: 9px 12px 9px 0; border-bottom: 1px solid var(--line); }
+.settings-table td:first-child { padding-right: 24px; }
+.settings-table td strong, .settings-table td code { display: block; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+.settings-table td strong { margin-bottom: 5px; font-size: 12px; }
+.settings-table td code { color: var(--muted); font: 9px var(--mono); }
+.settings-table input, .settings-table select { width: 100%; height: 38px; padding: 0 10px; border: 1px solid var(--line); border-radius: 0; outline: 0; background: rgba(255,255,255,.32); font: 10px var(--mono); }
+.settings-table input:focus, .settings-table select:focus { border-color: var(--ink); box-shadow: 3px 3px 0 var(--acid); }
+.row-state { color: var(--muted); font: 9px var(--mono); }
+.row-state.active { color: #3e711e; font-weight: 700; }
+.settings-empty { padding: 50px 0 !important; color: var(--muted); text-align: center; font: 11px var(--mono); }
+.json-editor { width: 100%; min-height: 560px; padding: 24px; resize: vertical; border: 1px solid var(--ink); border-top: 0; border-radius: 0; outline: 0; color: #d9ded3; background: #171b16; tab-size: 2; font: 12px/1.7 var(--mono); }
+.json-editor:focus { box-shadow: inset 4px 0 0 var(--acid); }
+.settings-message { min-height: 42px; padding-top: 14px; color: var(--muted); font: 10px var(--mono); }
+.settings-message.success { color: #3e711e; }
+.settings-message.error { color: #c83e19; }
+
 @media (max-width: 980px) { nav { display: none; }.hero { grid-template-columns: 1fr; padding-top: 110px; }.hero-visual { height: 430px; }.challenge-grid { grid-template-columns: repeat(2, 1fr); }.lab { grid-template-columns: 1fr; }.problem-panel { padding: 55px 7vw; }.problem-panel h2 { margin-top: 55px; }.editor-panel { min-height: 720px; } }
 @media (max-width: 600px) { .topbar { padding: 0 20px; }.status span { display: none; }.hero { padding: 90px 20px 60px; min-height: 0; }.hero h1 { font-size: 56px; }.hero-visual { transform: scale(.75); margin: -30px -70px; }.catalog { padding: 80px 20px; }.section-title { align-items: start; gap: 20px; }.filters { align-items: stretch; flex-direction: column; gap: 14px; }.filter-buttons { overflow-x: auto; }.challenge-grid { grid-template-columns: 1fr; }.lab { display: block; }.problem-panel { padding: 45px 20px; }.editor-panel { min-height: 700px; }.actions button { flex: 1; padding: 0 8px; }kbd { display: none; }footer { padding: 0 20px; gap: 20px; } }
 
@@ -172,4 +214,15 @@ body.resizing-rows { cursor: row-resize; user-select: none; }
   .editor-head > div:first-child { display: none; }
   .editor-tools { width: 100%; justify-content: space-between; min-width: 0; }
   .language-buttons { max-width: calc(100vw - 90px); }
+  .settings-main { width: auto; padding: 38px 20px 65px; }
+  .settings-heading { align-items: start; flex-direction: column; }
+  .settings-heading h1 { font-size: 44px; }
+  .settings-actions { width: 100%; }
+  .settings-button { flex: 1; }
+  .settings-toolbar { grid-template-columns: 1fr auto; gap: 12px; padding: 12px 0; }
+  .view-tabs { min-height: 44px; }
+  .settings-toolbar input { grid-column: 1 / -1; grid-row: 2; }
+  .override-count { grid-column: 2; grid-row: 1; }
+  .settings-table-wrap { margin-right: -20px; }
+  .json-editor { min-height: 500px; padding: 16px; font-size: 11px; }
 }

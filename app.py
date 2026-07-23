@@ -14,6 +14,7 @@ from pathlib import Path
 from urllib.parse import parse_qs, urlparse
 
 from challenge_repository import ChallengeRepository
+from judge_config import read_judge_config, save_judge_config
 from python_judge import SUPPORTED_LANGUAGES, judge_python
 from upstream_judge import judge
 
@@ -23,6 +24,7 @@ STATIC_DIR = ROOT / "static"
 UPSTREAM_DIR = Path(os.environ.get("LEETGPU_CHALLENGES", ROOT / "upstream" / "leetgpu-challenges"))
 REPOSITORY = ChallengeRepository(UPSTREAM_DIR)
 MAX_SOURCE_BYTES = 100_000
+MAX_CONFIG_BYTES = 1_000_000
 
 
 def gpu_available() -> bool:
@@ -93,6 +95,12 @@ class PracticeHandler(SimpleHTTPRequestHandler):
         if path == "/api/challenges":
             self.send_json(REPOSITORY.list())
             return
+        if path == "/api/judge-overrides":
+            try:
+                self.send_json(read_judge_config())
+            except (OSError, ValueError) as error:
+                self.send_json({"error": str(error)}, HTTPStatus.INTERNAL_SERVER_ERROR)
+            return
         if path.startswith("/api/challenges/"):
             challenge_id = path.rsplit("/", 1)[-1]
             query = parse_qs(urlparse(self.path).query)
@@ -105,7 +113,28 @@ class PracticeHandler(SimpleHTTPRequestHandler):
             return
         if path.startswith("/challenge/"):
             self.path = "/challenge.html"
+        elif path == "/settings":
+            self.path = "/settings.html"
         super().do_GET()
+
+    def do_PUT(self) -> None:
+        path = urlparse(self.path).path
+        if path != "/api/judge-overrides":
+            self.send_json({"error": "找不到该接口。"}, HTTPStatus.NOT_FOUND)
+            return
+        try:
+            content_length = int(self.headers.get("Content-Length", "0"))
+            if content_length > MAX_CONFIG_BYTES:
+                raise ValueError("判题配置过大。")
+            payload = json.loads(self.rfile.read(content_length))
+            config = save_judge_config(payload)
+        except (ValueError, json.JSONDecodeError) as error:
+            self.send_json({"error": str(error)}, HTTPStatus.BAD_REQUEST)
+            return
+        except OSError as error:
+            self.send_json({"error": f"保存判题配置失败：{error}"}, HTTPStatus.INTERNAL_SERVER_ERROR)
+            return
+        self.send_json({"ok": True, "config": config})
 
     def do_POST(self) -> None:
         path = urlparse(self.path).path

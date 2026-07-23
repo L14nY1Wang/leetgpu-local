@@ -11,6 +11,9 @@ from judge_config import (
     effective_tolerances,
     load_float32_matmul_precisions,
     load_judge_overrides,
+    read_judge_config,
+    save_judge_config,
+    validate_judge_config,
 )
 
 
@@ -76,6 +79,26 @@ class JudgeConfigTests(unittest.TestCase):
                     effective_tolerances("2_matrix_multiplication", 1e-4, 1e-4),
                     (0.2, 1e-4),
                 )
+
+    def test_validation_rejects_unknown_and_invalid_values(self):
+        with self.assertRaisesRegex(ValueError, "未知字段"):
+            validate_judge_config({"unexpected": {}})
+        with self.assertRaisesRegex(ValueError, "有限的非负数"):
+            validate_judge_config({"tolerances": {"1_vector_add": {"atol": -1}}})
+        with self.assertRaisesRegex(ValueError, "FP32 matmul"):
+            validate_judge_config({"float32MatmulPrecision": {"1_vector_add": "fast"}})
+
+    def test_save_is_validated_and_immediately_reloaded(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            config_path = Path(temp_dir) / "judge_overrides.json"
+            with patch("judge_config.CONFIG_PATH", config_path):
+                saved = save_judge_config({
+                    "tolerances": {"1_vector_add": {"atol": 0.25}},
+                    "float32MatmulPrecision": {"1_vector_add": "high"},
+                })
+                self.assertEqual(read_judge_config(), saved)
+                self.assertEqual(effective_tolerances("1_vector_add", 1e-5, 1e-6), (0.25, 1e-6))
+                self.assertFalse(any(config_path.parent.glob(".judge_overrides.json.*.tmp")))
 
 
 if __name__ == "__main__":
