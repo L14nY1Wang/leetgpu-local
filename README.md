@@ -1,5 +1,7 @@
 # Kernelyard / LeetGPU Local
 
+English | [简体中文](README.zh-CN.md)
+
 A self-hosted challenge browser and GPU judge for the official
 [`AlphaGPU/leetgpu-challenges`](https://github.com/AlphaGPU/leetgpu-challenges)
 repository.
@@ -28,10 +30,24 @@ for all 89 challenges, and a TileLang starter is generated from each official
 
 ## Install
 
+Clone this repository together with the official challenge submodule:
+
+```bash
+git clone --recurse-submodules <repository-url>
+cd leetgpu-local
+```
+
+If the repository was cloned without submodules, initialize it with:
+
+```bash
+git submodule update --init --recursive
+```
+
+Then install the Python environment:
+
 ```bash
 uv venv --python 3.12 .venv
 UV_CACHE_DIR=/tmp/leetgpu-uv-cache uv sync --extra judge --locked
-.venv/bin/python scripts/sync_upstream.py
 ```
 
 The cache override is only needed when the default uv cache is not writable.
@@ -53,9 +69,11 @@ Use the **Sync repository** button on the index, or run:
 .venv/bin/python scripts/sync_upstream.py
 ```
 
-Both paths execute a fast-forward-only pull. New, removed, and modified
-upstream challenges are reflected by the API and UI immediately after the
-checkout changes.
+Both paths execute a fast-forward-only pull inside the challenge submodule.
+New, removed, and modified upstream challenges are reflected by the API and UI
+immediately after the checkout changes. After updating the challenge checkout,
+commit the new submodule pointer in this repository when the update should be
+shared with other users.
 
 Set `LEETGPU_CHALLENGES=/path/to/checkout` to read a different checkout.
 
@@ -91,6 +109,12 @@ docker compose up --build
 The image clones the official challenge repository while building. The Sync
 button can fast-forward that checkout later.
 
+## Local data
+
+Editor drafts and completion records are stored in the browser's
+`localStorage`. The repository's `solutions/` directory is reserved for local
+solutions and is excluded from Git by `.gitignore`.
+
 ## Security and license
 
 Submissions are arbitrary native CUDA/C++ code. Run this service only for
@@ -98,6 +122,6 @@ trusted users on a trusted network. A public or multi-user deployment requires
 a hardened runner sandbox with process, filesystem, network, and resource
 isolation.
 
-The upstream challenge content remains in its own Git checkout and is governed
+The upstream challenge content remains in its own Git submodule and is governed
 by its CC BY-NC-ND 4.0 license. This project reads those files without modifying
 or republishing them.
