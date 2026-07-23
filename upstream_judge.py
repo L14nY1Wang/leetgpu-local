@@ -12,6 +12,8 @@ import tempfile
 import time
 from pathlib import Path
 
+from judge_config import apply_challenge_overrides
+
 
 def _nvcc_command(nvcc: str, source: Path, output: Path) -> list[str]:
     nvcc_path = Path(nvcc).resolve()
@@ -37,7 +39,8 @@ def _load_challenge(directory: Path):
         raise RuntimeError("无法加载题目定义。")
     module = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(module)
-    return module.Challenge(device="cuda")
+    challenge = module.Challenge(device="cuda")
+    return apply_challenge_overrides(directory.name, challenge)
 
 
 def _materialize(value, torch):

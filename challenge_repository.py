@@ -8,6 +8,8 @@ import re
 import subprocess
 from pathlib import Path
 
+from judge_config import effective_tolerances
+
 
 LANGUAGE_FILES = {
     "cuda": "starter.cu",
@@ -133,6 +135,11 @@ class ChallengeRepository:
             "accessTier": metadata.get("access_tier", "free"),
         }
         if details:
+            atol, rtol = effective_tolerances(
+                directory.name,
+                metadata.get("atol"),
+                metadata.get("rtol"),
+            )
             if selected_language == "tilelang":
                 starter = _tilelang_starter(pytorch_path.read_text(encoding="utf-8"))
             else:
@@ -144,8 +151,8 @@ class ChallengeRepository:
                     "language": selected_language,
                     "starter": starter,
                     "signature": _signature(starter) if selected_language == "cuda" else _python_signature(starter),
-                    "atol": metadata.get("atol"),
-                    "rtol": metadata.get("rtol"),
+                    "atol": atol,
+                    "rtol": rtol,
                     "numGpus": metadata.get("num_gpus", 1),
                     "sourceUrl": f"https://github.com/AlphaGPU/leetgpu-challenges/tree/main/challenges/{directory.parent.name}/{directory.name}",
                 }

@@ -72,6 +72,9 @@ python app.py
 
 设置 `LEETGPU_CHALLENGES=/path/to/checkout` 可以读取其他位置的题库检出。
 
+本地判题参数覆盖写在 `judge_overrides.json` 中。可以按题目 ID 覆盖 `atol` 和 `rtol`；
+该配置会同时用于 API 展示、CUDA 判题和 Python GPU 语言判题，不会修改上游题库。
+
 ## 判题机制
 
 CUDA 提交会通过 `nvcc` 编译为动态库。判题器加载所选题目的官方 `Challenge`，生成
