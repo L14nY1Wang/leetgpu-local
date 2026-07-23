@@ -4,5 +4,8 @@
       "atol": 0.0005,
       "rtol": 0.0001
     }
+  },
+  "float32MatmulPrecision": {
+    "2_matrix_multiplication": "highest"
   }
 }

@@ -8,7 +8,7 @@ import re
 import subprocess
 from pathlib import Path
 
-from judge_config import effective_tolerances
+from judge_config import effective_tolerances, load_float32_matmul_precisions
 
 
 LANGUAGE_FILES = {
@@ -153,6 +153,9 @@ class ChallengeRepository:
                     "signature": _signature(starter) if selected_language == "cuda" else _python_signature(starter),
                     "atol": atol,
                     "rtol": rtol,
+                    "float32MatmulPrecision": load_float32_matmul_precisions().get(
+                        directory.name
+                    ),
                     "numGpus": metadata.get("num_gpus", 1),
                     "sourceUrl": f"https://github.com/AlphaGPU/leetgpu-challenges/tree/main/challenges/{directory.parent.name}/{directory.name}",
                 }
