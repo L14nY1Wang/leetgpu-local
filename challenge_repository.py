@@ -143,7 +143,7 @@ class ChallengeRepository:
                     "descriptionHtml": description_html,
                     "language": selected_language,
                     "starter": starter,
-                    "signature": _signature(starter) if selected_language == "cuda" else "solve(...)",
+                    "signature": _signature(starter) if selected_language == "cuda" else _python_signature(starter),
                     "atol": metadata.get("atol"),
                     "rtol": metadata.get("rtol"),
                     "numGpus": metadata.get("num_gpus", 1),

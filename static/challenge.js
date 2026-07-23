@@ -28,6 +28,125 @@ const drafts = {
   }
 };
 
+const workspaceSizing = {
+  problemKey: "kernel-layout:problem-width",
+  consoleKey: "kernel-layout:console-height",
+  shell: null,
+  codePane: null,
+  problemDivider: null,
+  consoleDivider: null,
+
+  clamp(value, minimum, maximum) {
+    return Math.min(Math.max(value, minimum), maximum);
+  },
+
+  setProblemWidth(value, persist = false) {
+    if (matchMedia("(max-width: 980px)").matches) return;
+    const shellWidth = this.shell.getBoundingClientRect().width;
+    const minimum = Math.min(320, shellWidth * 0.4);
+    const maximum = Math.max(minimum, shellWidth - 466);
+    const width = this.clamp(value, minimum, maximum);
+    this.shell.style.setProperty("--problem-width", `${width}px`);
+    this.problemDivider.setAttribute("aria-valuenow", Math.round(width / shellWidth * 100));
+    if (persist) localStorage.setItem(this.problemKey, String(Math.round(width)));
+  },
+
+  setConsoleHeight(value, persist = false) {
+    const paneHeight = this.codePane.getBoundingClientRect().height;
+    const maximum = Math.max(120, paneHeight - 284);
+    const height = this.clamp(value, 120, maximum);
+    this.codePane.style.setProperty("--console-height", `${height}px`);
+    this.consoleDivider.setAttribute("aria-valuenow", Math.round(height / paneHeight * 100));
+    if (persist) localStorage.setItem(this.consoleKey, String(Math.round(height)));
+  },
+
+  bindPointer(handle, orientation) {
+    handle.addEventListener("pointerdown", (event) => {
+      if (event.button !== 0 || (orientation === "vertical" && matchMedia("(max-width: 980px)").matches)) return;
+      event.preventDefault();
+      const startPosition = orientation === "vertical" ? event.clientX : event.clientY;
+      const startSize = orientation === "vertical"
+        ? document.querySelector(".problem-pane").getBoundingClientRect().width
+        : document.querySelector(".console").getBoundingClientRect().height;
+      handle.setPointerCapture(event.pointerId);
+      handle.classList.add("dragging");
+      document.body.classList.add(orientation === "vertical" ? "resizing-columns" : "resizing-rows");
+
+      const move = (moveEvent) => {
+        const delta = orientation === "vertical"
+          ? moveEvent.clientX - startPosition
+          : startPosition - moveEvent.clientY;
+        if (orientation === "vertical") this.setProblemWidth(startSize + delta);
+        else this.setConsoleHeight(startSize + delta);
+      };
+      const stop = () => {
+        handle.classList.remove("dragging");
+        document.body.classList.remove("resizing-columns", "resizing-rows");
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", stop);
+        handle.removeEventListener("pointercancel", stop);
+        if (orientation === "vertical") {
+          this.setProblemWidth(document.querySelector(".problem-pane").getBoundingClientRect().width, true);
+        } else {
+          this.setConsoleHeight(document.querySelector(".console").getBoundingClientRect().height, true);
+        }
+      };
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", stop);
+      handle.addEventListener("pointercancel", stop);
+    });
+  },
+
+  bindKeyboard(handle, orientation) {
+    handle.addEventListener("keydown", (event) => {
+      const amount = event.shiftKey ? 48 : 16;
+      if (orientation === "vertical" && ["ArrowLeft", "ArrowRight"].includes(event.key)) {
+        event.preventDefault();
+        const width = document.querySelector(".problem-pane").getBoundingClientRect().width;
+        this.setProblemWidth(width + (event.key === "ArrowRight" ? amount : -amount), true);
+      }
+      if (orientation === "horizontal" && ["ArrowUp", "ArrowDown"].includes(event.key)) {
+        event.preventDefault();
+        const height = document.querySelector(".console").getBoundingClientRect().height;
+        this.setConsoleHeight(height + (event.key === "ArrowUp" ? amount : -amount), true);
+      }
+    });
+    handle.addEventListener("dblclick", () => {
+      if (orientation === "vertical") {
+        localStorage.removeItem(this.problemKey);
+        this.shell.style.removeProperty("--problem-width");
+        this.problemDivider.setAttribute("aria-valuenow", "42");
+      } else {
+        localStorage.removeItem(this.consoleKey);
+        this.codePane.style.removeProperty("--console-height");
+        this.consoleDivider.setAttribute("aria-valuenow", "30");
+      }
+    });
+  },
+
+  initialize() {
+    this.shell = document.querySelector(".workspace-shell");
+    this.codePane = document.querySelector(".code-pane");
+    this.problemDivider = $("#workspaceDivider");
+    this.consoleDivider = $("#consoleDivider");
+    this.bindPointer(this.problemDivider, "vertical");
+    this.bindPointer(this.consoleDivider, "horizontal");
+    this.bindKeyboard(this.problemDivider, "vertical");
+    this.bindKeyboard(this.consoleDivider, "horizontal");
+
+    const problemWidth = Number(localStorage.getItem(this.problemKey));
+    const consoleHeight = Number(localStorage.getItem(this.consoleKey));
+    if (problemWidth > 0) this.setProblemWidth(problemWidth);
+    if (consoleHeight > 0) this.setConsoleHeight(consoleHeight);
+    window.addEventListener("resize", () => {
+      const currentProblemWidth = document.querySelector(".problem-pane").getBoundingClientRect().width;
+      const currentConsoleHeight = document.querySelector(".console").getBoundingClientRect().height;
+      this.setProblemWidth(currentProblemWidth);
+      this.setConsoleHeight(currentConsoleHeight);
+    });
+  },
+};
+
 function sanitize(markup) {
   const template = document.createElement("template");
   template.innerHTML = markup;
@@ -36,11 +155,6 @@ function sanitize(markup) {
     if (attribute.name.startsWith("on") || /javascript:/i.test(attribute.value)) node.removeAttribute(attribute.name);
   }));
   return template.innerHTML;
-}
-
-function updateLines() {
-  const count = Math.max(1, $("#codeEditor").value.split("\n").length);
-  $("#lineRail").textContent = Array.from({ length: count }, (_, index) => index + 1).join("\n");
 }
 
 function showOutput(message, passed) {
@@ -89,8 +203,8 @@ async function loadChallenge(language) {
   }
   $("#signature").textContent = challenge.signature;
   $("#fileName").textContent = `solution.${extensions[state.language] || "txt"}`;
-  $("#codeEditor").value = drafts.get() || challenge.starter;
-  updateLines();
+  KernelEditor.setLanguage(state.language, challenge.signature);
+  KernelEditor.setValue(drafts.get() || challenge.starter);
   renderLanguageButtons();
   const runnable = Boolean(state.health?.languages?.[state.language]);
   $("#runButton").disabled = !runnable;
@@ -108,7 +222,7 @@ async function execute(submit) {
   try {
     const result = await api("/api/run", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ challengeId: state.id, language: state.language, source: $("#codeEditor").value, submit })
+      body: JSON.stringify({ challengeId: state.id, language: state.language, source: KernelEditor.getValue(), submit })
     });
     showOutput(`${result.passed ? "✓" : "×"} ${stageLabels[result.stage] || result.stage}\n\n${result.output}`, result.passed);
     if (result.passed && submit) drafts.markSolved();
@@ -130,12 +244,13 @@ async function init() {
   } catch (error) { showOutput(error.message, false); $("#problemTitle").textContent = "无法加载题目"; }
 }
 
-$("#codeEditor").addEventListener("input", () => { updateLines(); if (state.challenge) drafts.set($("#codeEditor").value); });
-$("#codeEditor").addEventListener("keydown", (event) => {
-  if (event.key === "Tab") { event.preventDefault(); event.target.setRangeText("  ", event.target.selectionStart, event.target.selectionEnd, "end"); event.target.dispatchEvent(new Event("input")); }
-  if (event.ctrlKey && event.key === "Enter") execute(false);
+KernelEditor.initialize({
+  parent: $("#codeEditor"),
+  onChange: (value) => { if (state.challenge) drafts.set(value); },
+  onRun: () => execute(false),
 });
-$("#resetButton").addEventListener("click", () => { if (!state.challenge) return; $("#codeEditor").value = state.challenge.starter; drafts.set(state.challenge.starter); updateLines(); });
+workspaceSizing.initialize();
+$("#resetButton").addEventListener("click", () => { if (!state.challenge) return; KernelEditor.setValue(state.challenge.starter); KernelEditor.focus(); });
 $("#runButton").addEventListener("click", () => execute(false));
 $("#submitButton").addEventListener("click", () => execute(true));
 init();

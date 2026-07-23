@@ -1,7 +1,7 @@
 .venv
+node_modules
 leetgpu-local
 __pycache__
 *.pyc
 .git
 .DS_Store
-

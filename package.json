@@ -1,0 +1,18 @@
+{
+  "name": "kernelyard-editor",
+  "private": true,
+  "scripts": {
+    "build:editor": "esbuild static/editor.js --bundle --minify --format=iife --supported:template-literal=false --outfile=static/vendor/editor.bundle.js",
+    "test:e2e": "playwright test"
+  },
+  "dependencies": {
+    "@codemirror/lang-cpp": "^6.0.3",
+    "@codemirror/lang-python": "^6.2.1",
+    "@lezer/highlight": "^1.2.1",
+    "codemirror": "^6.0.2"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1",
+    "esbuild": "^0.25.0"
+  }
+}

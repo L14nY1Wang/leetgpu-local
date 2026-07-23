@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/vendor/katex/katex.min.css">
-  <link rel="stylesheet" href="/styles.css">
+  <link rel="stylesheet" href="/styles.css?v=20260723.4">
 </head>
 <body class="workspace-page">
   <div class="noise"></div>
@@ -29,13 +29,16 @@
       <article id="problemBody" class="problem-body"><p>正在读取官方题目内容。</p></article>
     </section>
 
+    <button id="workspaceDivider" class="resize-handle resize-handle-vertical" type="button" role="separator" aria-label="调整题目与代码区域宽度" aria-orientation="vertical" aria-valuemin="0" aria-valuemax="100" aria-valuenow="42" title="拖动调整宽度，双击恢复默认"></button>
+
     <section class="code-pane">
       <div class="editor-head">
         <div><span class="file-dot"></span><span id="fileName">solution.cu</span></div>
         <div class="editor-tools"><div id="languageButtons" class="language-buttons"></div><button id="resetButton" class="ghost-button">重置代码</button></div>
       </div>
       <div class="signature-bar"><span>程序入口</span><code id="signature">solve(...)</code></div>
-      <div class="editor-wrap"><div class="line-rail" id="lineRail">1</div><textarea id="codeEditor" spellcheck="false" aria-label="代码编辑器"></textarea></div>
+      <div class="editor-wrap"><div id="codeEditor" aria-label="代码编辑器"></div></div>
+      <button id="consoleDivider" class="resize-handle resize-handle-horizontal" type="button" role="separator" aria-label="调整代码与判题输出区域高度" aria-orientation="horizontal" aria-valuemin="0" aria-valuemax="100" aria-valuenow="30" title="拖动调整高度，双击恢复默认"></button>
       <div class="console">
         <div class="console-head"><span>判题输出</span><span id="runState">准备就绪</span></div>
         <pre id="consoleOutput">// 加载 CUDA 初始代码后即可运行官方测试。</pre>
@@ -45,6 +48,7 @@
   </main>
   <script src="/vendor/katex/katex.min.js" defer></script>
   <script src="/vendor/katex/auto-render.min.js" defer></script>
-  <script src="/challenge.js" defer></script>
+  <script src="/vendor/editor.bundle.js?v=20260723.4" defer></script>
+  <script src="/challenge.js?v=20260723.4" defer></script>
 </body>
 </html>
