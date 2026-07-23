@@ -1,0 +1,8 @@
+services:
+  leetgpu-local:
+    build: .
+    ports:
+      - "8080:8080"
+    gpus: all
+    restart: unless-stopped
+

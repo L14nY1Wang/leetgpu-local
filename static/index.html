@@ -1,0 +1,56 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="在自己的服务器上练习完整的 LeetGPU 题库。">
+  <title>Kernelyard / 题目列表</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="catalog-page">
+  <div class="noise"></div>
+  <header class="topbar">
+    <a class="brand" href="/"><span class="brand-mark">K</span><span>KERNELYARD</span></a>
+    <nav><a href="#challenges">题目列表</a><a href="https://github.com/AlphaGPU/leetgpu-challenges" target="_blank" rel="noreferrer">上游仓库 ↗</a></nav>
+    <div class="status"><i id="serverDot"></i><span id="serverStatus">正在检查判题器</span></div>
+  </header>
+
+  <main>
+    <section class="hero catalog-hero">
+      <div class="hero-copy">
+        <span class="eyebrow">官方题库镜像 / 实时读取</span>
+        <h1>选择你的<br><em>GPU 题目.</em></h1>
+        <p>所有题目都直接读取自 AlphaGPU 官方仓库。在这里选择题目，然后进入独立的 GPU 做题工作台。</p>
+        <a class="primary-link" href="#challenges">打开题目列表 <span>↓</span></a>
+      </div>
+      <div class="manifest-card">
+        <span class="manifest-label">上游题库清单</span>
+        <strong id="manifestCount">--</strong>
+        <span>道可用题目</span>
+        <div class="manifest-row"><span>当前版本</span><code id="manifestCommit">检查中...</code></div>
+        <button id="syncButton" class="sync-button">同步题目仓库 <span>↻</span></button>
+        <small id="syncMessage">从官方 GitHub 仓库快速同步最新修改。</small>
+      </div>
+    </section>
+
+    <section class="catalog" id="challenges">
+      <div class="section-title">
+        <div><span class="eyebrow">练习队列</span><h2>题目列表</h2></div>
+        <span id="progressText">已完成 0 / 0</span>
+      </div>
+      <div class="filters">
+        <input id="searchInput" type="search" placeholder="搜索全部题目..." aria-label="搜索题目">
+        <div id="filterButtons" class="filter-buttons"></div>
+      </div>
+      <div class="catalog-summary"><span id="resultCount">0 道题目</span><span>按官方题号排序</span></div>
+      <div id="challengeGrid" class="challenge-grid"><div class="loading">正在读取上游题库清单...</div></div>
+    </section>
+  </main>
+
+  <footer><span>KERNELYARD / 本地版</span><span>题库来源：ALPHAGPU/LEETGPU-CHALLENGES</span></footer>
+  <script src="/catalog.js" defer></script>
+</body>
+</html>

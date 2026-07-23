@@ -1,0 +1,3 @@
+[submodule "upstream/leetgpu-challenges"]
+	path = upstream/leetgpu-challenges
+	url = https://github.com/AlphaGPU/leetgpu-challenges.git

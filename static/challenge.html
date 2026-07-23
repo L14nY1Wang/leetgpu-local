@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Kernelyard / 做题工作台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/katex/katex.min.css">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body class="workspace-page">
+  <div class="noise"></div>
+  <header class="topbar workspace-topbar">
+    <a class="brand" href="/"><span class="brand-mark">K</span><span>KERNELYARD</span></a>
+    <a class="back-link" href="/">← 返回题目列表</a>
+    <div class="workspace-nav"><a id="previousLink" href="#">上一题</a><span id="workspaceCounter">-- / --</span><a id="nextLink" href="#">下一题</a></div>
+    <div class="status"><i id="serverDot"></i><span id="serverStatus">正在检查判题器</span></div>
+  </header>
+
+  <main class="workspace-shell">
+    <section class="problem-pane">
+      <div class="problem-heading">
+        <div><span id="challengeNumber" class="eyebrow">题目 ---</span><span id="difficultyBadge" class="difficulty">---</span></div>
+        <h1 id="problemTitle">正在加载题目...</h1>
+        <div class="problem-meta"><span id="problemCategory">GPU 计算</span><a id="sourceLink" target="_blank" rel="noreferrer">查看题目源码 ↗</a></div>
+      </div>
+      <article id="problemBody" class="problem-body"><p>正在读取官方题目内容。</p></article>
+    </section>
+
+    <section class="code-pane">
+      <div class="editor-head">
+        <div><span class="file-dot"></span><span id="fileName">solution.cu</span></div>
+        <div class="editor-tools"><div id="languageButtons" class="language-buttons"></div><button id="resetButton" class="ghost-button">重置代码</button></div>
+      </div>
+      <div class="signature-bar"><span>程序入口</span><code id="signature">solve(...)</code></div>
+      <div class="editor-wrap"><div class="line-rail" id="lineRail">1</div><textarea id="codeEditor" spellcheck="false" aria-label="代码编辑器"></textarea></div>
+      <div class="console">
+        <div class="console-head"><span>判题输出</span><span id="runState">准备就绪</span></div>
+        <pre id="consoleOutput">// 加载 CUDA 初始代码后即可运行官方测试。</pre>
+      </div>
+      <div class="actions"><button id="runButton" class="run-button">运行样例 <kbd>Ctrl ↵</kbd></button><button id="submitButton" class="submit-button">提交全部测试 <span>→</span></button></div>
+    </section>
+  </main>
+  <script src="/vendor/katex/katex.min.js" defer></script>
+  <script src="/vendor/katex/auto-render.min.js" defer></script>
+  <script src="/challenge.js" defer></script>
+</body>
+</html>

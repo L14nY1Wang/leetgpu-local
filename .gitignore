@@ -1,0 +1,12 @@
+__pycache__/
+*.pyc
+.venv/
+solutions/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.log
+leetgpu-local/
+.DS_Store
