@@ -123,3 +123,20 @@ test("hides pane scrollbars without disabling scrolling", async ({ page }) => {
   expect(editorOverflow).toEqual({ horizontal: true, vertical: true });
   await page.screenshot({ path: "/tmp/kernelyard-hidden-scrollbars.png", fullPage: true });
 });
+
+test("distinguishes the active selection from matching identifiers", async ({ page }) => {
+  await openEditor(page);
+  await page.evaluate(() => window.KernelEditor.setValue(
+    "int threadsPerBlock = 256;\nint blocks = threadsPerBlock + threadsPerBlock;"
+  ));
+  const content = page.locator(".cm-content");
+  await content.dblclick({ position: { x: 95, y: 28 } });
+  const activeSelection = page.locator(".cm-selectionLayer .cm-selectionBackground").first();
+  await expect(activeSelection).toBeVisible();
+  await expect.poll(() => activeSelection.evaluate((element) => getComputedStyle(element).backgroundColor)).toBe("rgb(47, 111, 143)");
+  await expect(page.locator(".cm-selectionMatch").first()).toBeVisible();
+  await expect.poll(() => page.locator(".cm-selectionMatch").first().evaluate((element) =>
+    getComputedStyle(element).backgroundColor
+  )).toBe("rgba(216, 255, 62, 0.18)");
+  await page.screenshot({ path: "/tmp/kernelyard-selection-colors.png", fullPage: true });
+});
